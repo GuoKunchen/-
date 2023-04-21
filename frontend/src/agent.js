@@ -8,13 +8,10 @@ const API_ROOT = 'http://10.214.241.122:8080';
 const encode = encodeURIComponent;
 const responseBody = res => res.body;
 
-// let token ="Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJkNTBlYmMyOC0zNTJlLTQ2NjgtOTQ3MS1hZTlhYmNjYzhjOTYiLCJzdWIiOiI4IiwiaXNzIjoiemp1bHNzMiIsImlhdCI6MTY4MTQ1ODkxNSwiZXhwIjoxNjgxNDYyNTE1fQ.9yIXyXbXyF9HV0ljkUXInxUaht0fYW0M6nr3E8ccPNE"
-let token = ""
 
 const tokenPlugin = req => {
-	token = localStorage.getItem('token')
-    if (token) {
-        req.set('Authorization', `${token}`);
+    if (localStorage.getItem('token')) {
+        req.set('Authorization', `${localStorage.getItem('token')}`);
     }
 }
 
@@ -64,29 +61,7 @@ const Auth = {
         requests.get('/code/send,${phoneNumber}'),
     changePassword: (code, newPassword)=>
         requests.post('/user/changePassword',{code:code,newPassword:newPassword}),
-	// refreshToken: () => {
-    //     if (isRefreshing) {
-    //         // 如果正在更新 token，将当前请求放入队列中
-    //         return new Promise((resolve, reject) => {
-    //             queue.push({resolve, reject});
-    //         });
-    //     } else {
-    //         isRefreshing = true;
-    //         refreshPromise = Auth.login();
-    //         return refreshPromise.then(newToken => {
-	// 			console.log(newToken)
-    //             token = newToken.msg;
-    //             isRefreshing = false;
-    //             // 更新 token 后，处理队列中的所有请求
-    //             queue.forEach(({resolve}) => resolve(newToken));
-    //             queue.length = 0;
-    //         }).catch(err => {
-    //             isRefreshing = false;
-    //             queue.forEach(({reject}) => reject(err));
-    //             queue.length = 0;
-    //         });
-    //     }
-	// }
+
 };
 
 const Profile ={
@@ -97,16 +72,30 @@ const Profile ={
     getSell :() =>
         requests.get('/good/list'),
     getCart:() =>
-        requests.get('/cart/detail')
+        requests.get('/cart/detail'),
 
+    updateName:(realName)=>
+        requests.post('/user/updaterealname',{realName: realName}),
+    updateClazz:(clazz)=>
+        requests.post('/user/updateclazz',{clazz:clazz}),
+    updateSno:(sno)=>
+        requests.post('/user/updatesno',{sno:sno}),
+    updateDormitory:(dormitory)=>
+        requests.post('/user/updatedormitory',{dormitory:dormitory}),
+    updateGender:(gender)=>
+        requests.post('/user/updategender',{gender:gender}),
+    updateAvatar:(avatar)=>
+        requests.post('/user/updateavatar',{avatar:avatar})
 }
 
-
+const Good={
+    getGoodDetail: id =>
+        requests.get(`/good/detail/${id}`)
+}
 
 
 export default {
     Auth,
     Profile,
-    // setToken: _token => { token = _token; },
-    token
+    Good
 };
